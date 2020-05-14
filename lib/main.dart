@@ -84,44 +84,56 @@ class _MyHomePageState extends State<MyHomePage> {
                 var feed = snapshot.data;
                 return ListView.builder(
                   itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        ExpansionTile(
-                          title: Text(feed.items[index].title),
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Html(data: feed.items[index].description),
-                            ),
-                            MaterialButton(
-                              onPressed: () async {
-                                String url = feed.items[index].link;
-                                if (await canLaunch(url)) {
-                                  await launch(
-                                    url,
-                                    forceSafariVC: true,
-                                    forceWebView: true,
-                                  );
-                                } else {
-                                  throw 'Could not launch $url';
-                                }
-                              },
-                              color: Theme.of(context).primaryColor,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.launch),
-                                  SizedBox(
-                                    width: 8.0,
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        child: Column(
+                          children: <Widget>[
+                            Image.network(feed.items[index].description
+                                .substring(
+                                    feed.items[index].description
+                                            .indexOf('<img src="') +
+                                        '<img src="'.length,
+                                    feed.items[index].description
+                                        .indexOf('" />'))),
+                            ExpansionTile(
+                              title: Text(feed.items[index].title),
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child:
+                                      Html(data: feed.items[index].description),
+                                ),
+                                MaterialButton(
+                                  onPressed: () async {
+                                    String url = feed.items[index].link;
+                                    if (await canLaunch(url)) {
+                                      await launch(
+                                        url,
+                                        forceSafariVC: true,
+                                        forceWebView: true,
+                                      );
+                                    } else {
+                                      throw 'Could not launch $url';
+                                    }
+                                  },
+                                  color: Theme.of(context).primaryColor,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.launch),
+                                      SizedBox(
+                                        width: 8.0,
+                                      ),
+                                      Text('launch'.toUpperCase())
+                                    ],
                                   ),
-                                  Text('launch'.toUpperCase())
-                                ],
-                              ),
-                            )
+                                )
+                              ],
+                            ),
                           ],
                         ),
-                        Divider(),
-                      ],
+                      ),
                     );
                   },
                   itemCount: feed.items.length,

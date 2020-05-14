@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:webfeed/webfeed.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 enum FeedType { RSS, Atom }
 
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'NewsHub',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       darkTheme: ThemeData.dark(),
@@ -81,21 +80,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text('Error: ${snapshot.error}'),
                 );
               else {
-                var feed = snapshot.data;
+                final feed = snapshot.data;
                 return ListView.builder(
                   itemBuilder: (context, index) {
+                    final imageUrl = feed.items[index].description.substring(
+                        feed.items[index].description.indexOf('<img src="') +
+                            '<img src="'.length,
+                        feed.items[index].description.indexOf('" />'));
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Card(
                         child: Column(
                           children: <Widget>[
-                            Image.network(feed.items[index].description
-                                .substring(
-                                    feed.items[index].description
-                                            .indexOf('<img src="') +
-                                        '<img src="'.length,
-                                    feed.items[index].description
-                                        .indexOf('" />'))),
+                            FadeInImage.memoryNetwork(
+                                placeholder: kTransparentImage,
+                                image: imageUrl),
                             ExpansionTile(
                               title: Text(feed.items[index].title),
                               children: [
